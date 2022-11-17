@@ -22,11 +22,32 @@ Describe 'k3d development cluster'
     End
   End
 
-  Describe "Argo CD"
-    It "exposes the web interface"
+  Describe "Argo"
+    It "exposes the argo-cd interface"
       When call curl $CURL_ARGS https://argocd.k3d.localhost/
       The status should be success
       The result of "http_code()" should equal "200"
+    End
+
+    It "exposes the argo-rollouts dashboard"
+      When call curl $CURL_ARGS https://argo-rollouts.k3d.localhost/rollouts/
+      The status should be success
+      The result of "http_code()" should equal "200"
+    End
+
+    It "exposes the argo-workflows interface"
+      When call curl $CURL_ARGS https://argo-workflows.k3d.localhost/workflows/
+      The status should be success
+      The result of "http_code()" should equal "200"
+    End
+
+    It "allows argo-rollouts to manage traefikservices"
+      When run kubectl auth can-i \
+        --namespace default \
+        --as system:serviceaccount:argo-rollouts:argo-rollouts \
+        get traefikservices.traefik.containo.us
+      The status should be success
+      The output should equal "yes"
     End
   End
 

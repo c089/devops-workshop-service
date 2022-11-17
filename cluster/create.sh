@@ -82,6 +82,15 @@ helm install \
   --values "${CLUSTER_DIR}/argocd-values.yaml"
 kubectl apply -f "${CLUSTER_DIR}/argocd-ingressroute.yaml"
 
+# install argo-rollouts
+helm install \
+  -n argo-rollouts \
+  --create-namespace \
+  --values "${CLUSTER_DIR}/argo-rollouts-values.yaml" \
+  argo-rollouts argo/argo-rollouts
+kubectl apply -f "${CLUSTER_DIR}/argo-rollouts-ingressroute.yaml"
+kubectl apply -f "${CLUSTER_DIR}/argo-rollouts-rbac.yaml"
+
 # cleanup
 rm $keyfile
 rm $certfile

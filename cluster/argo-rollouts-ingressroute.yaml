@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argo-rollouts
+  namespace: argo-rollouts
+spec:
+  entryPoints:
+    - websecure
+  tls: {}
+  routes:
+    - kind: Rule
+      match: Host(`argo-rollouts.k3d.localhost`)
+      priority: 10
+      services:
+        - name: argo-rollouts-dashboard
+          port: 3100
