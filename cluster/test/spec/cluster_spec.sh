@@ -16,7 +16,6 @@ Describe 'k3d development cluster'
     End
 
     It "exposes the Traefik dashboard"
-      Pending "replace traefik-dashboard ingressroute"
       When call curl $CURL_ARGS https://traefik-dashboard.k3d.localhost/dashboard/
       The status should be success
       The result of "http_code()" should equal "200"

@@ -28,6 +28,17 @@ done
 kubectl delete deployment -n kube-system traefik # workaround "cannot ugprade" issue
 helm upgrade -n kube-system --values "${CLUSTER_DIR}/traefik-values.yaml" traefik traefik/traefik
 
+# wait for trafik to install ingressroute crd
+echo "waiting for crd..."
+until kubectl get crd | grep ingressroute; do
+  echo -n "."
+	sleep 1
+done
+
+# replace traefik ingressroute
+kubectl delete ingressroute -n kube-system traefik-dashboard
+kubectl apply -f "${CLUSTER_DIR}/traefik-ingressroute.yaml"
+
 # create and install a default certificate
 keyfile=$(mktemp)
 certfile=$(mktemp)
