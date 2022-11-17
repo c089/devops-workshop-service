@@ -33,18 +33,25 @@ Describe 'k3d development cluster'
 
   Describe "Prometheus"
     It "exposes the web interface"
-      Pending "add ingressroute"
       When call curl $CURL_ARGS https://prometheus.k3d.localhost/graph
       The status should be success
       The result of "http_code()" should equal "200"
     End
+
+    It "has ony the watchdog alert firing"
+      firing_alerts() {
+        env echo "$1" | jq -r '.data.alerts | map(select (.state == "firing" )) | map (.labels.alertname) | join(",")'
+      }
+      When call curl $CURL_ARGS_API https://prometheus.k3d.localhost/api/v1/alerts
+      The status should be success
+      The result of "firing_alerts()" should equal "Watchdog"
+    End
   End
 
   Describe "Grafana"
-    Pending "Install kube-prometheus-stack and loki-stack"
     grafana_datasources() { env echo "$1" | jq -r '.data.result[].metric.plugin_id' ; }
 
-    It "exposes the Grafana interface"
+    It "exposes the web interface"
       When call curl $CURL_ARGS https://grafana.k3d.localhost/
       The status should be success
       The result of "http_code()" should equal "302"

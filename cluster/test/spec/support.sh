@@ -14,7 +14,6 @@ ssl_verify_result() { curl_property "ssl_verify_result" "$1" ; }
 grafana_loki_query_instant() {
   # execute a loki metric query through grafana via an "instant" type query and
   # return the expected singular result
-  # FIXME uid static
   # FIXME password static
   #
   curl $CURL_ARGS_API "https://grafana.k3d.localhost/api/ds/query" \
@@ -24,7 +23,7 @@ grafana_loki_query_instant() {
     --data-raw '{
                   "queries": [
                     {
-                      "datasource": { "uid": "P8E80F9AEF21F6940", "type": "loki" },
+                      "datasource": { "uid": "loki", "type": "loki" },
                       "queryType": "instant",
                       "expr": "'$1'"
                     }

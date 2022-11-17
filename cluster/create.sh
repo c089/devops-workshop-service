@@ -50,6 +50,21 @@ kubectl create secret -n kube-system tls tls-default-certificate --cert $certfil
 rm $keyfile
 rm $certfile
 
+# install prometheus, alertmanager, grafana
+helm upgrade --install --atomic --create-namespace \
+	--namespace observability \
+  --values "${CLUSTER_DIR}/kube-prometheus-stack-values.yaml" \
+	kube-prometheus-stack prometheus-community/kube-prometheus-stack
+
+kubectl apply -f "${CLUSTER_DIR}/kube-prometheus-stack-ingressroutes.yaml"
+
+# install loki and prommtail
+helm upgrade --install --atomic --create-namespace \
+	--namespace observability \
+  loki-stack grafana/loki-stack
+
 until ${CLUSTER_DIR}/test.sh; do
+do
+	(${CLUSTER_DIR}/test.sh) && break
 	sleep 5
 done
