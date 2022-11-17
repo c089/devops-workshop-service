@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hello
+spec:
+  project: default
+  syncPolicy:
+    automated: {}
+  source:
+    path: example-service-deploy
+    repoURL: https://github.com/c089/playground-argocd
+    targetRevision: HEAD
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc

@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: hello
+spec:
+  entryPoints:
+    - websecure
+  tls: {}
+  routes:
+    - kind: Rule
+      match: Host(`hello.k3d.localhost`)
+      services:
+        - name: hello
+          port: 80
