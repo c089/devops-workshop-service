@@ -24,7 +24,6 @@ Describe 'k3d development cluster'
 
   Describe "Argo CD"
     It "exposes the web interface"
-      Pending "install argo-cd helm chart"
       When call curl $CURL_ARGS https://argocd.k3d.localhost/
       The status should be success
       The result of "http_code()" should equal "200"

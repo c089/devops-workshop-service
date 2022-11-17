@@ -73,6 +73,15 @@ helm upgrade --install --atomic \
 
 kubectl apply -f "${CLUSTER_DIR}/prometheus-blackbox-exporter-ingressroute.yaml"
 
+# install argocd
+helm install \
+  -n argocd \
+  --create-namespace \
+  argo-cd \
+  argo/argo-cd \
+  --values "${CLUSTER_DIR}/argocd-values.yaml"
+kubectl apply -f "${CLUSTER_DIR}/argocd-ingressroute.yaml"
+
 # cleanup
 rm $keyfile
 rm $certfile
