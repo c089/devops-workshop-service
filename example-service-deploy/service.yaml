@@ -8,4 +8,14 @@ spec:
     targetPort: hello-web
   selector:
     app: hello
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-canary
+spec:
+  ports:
+  - port: 80
+    targetPort: hello-web
+  selector:
+    app: hello

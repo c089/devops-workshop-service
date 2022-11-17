@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: hello
+spec:
+  replicas: 5
+  strategy:
+    canary:
+      stableService: hello
+      canaryService: hello-canary
+      steps:
+        - setWeight: 20
+        - pause: {}
+        - setWeight: 40
+        - pause:
+            duration: 10
+        - setWeight: 60
+        - pause:
+            duration: 10
+        - setWeight: 80
+        - pause:
+            duration: 10
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+        - image: ghcr.io/c089/argocd-playground-example-service:main
+          name: hello
+          ports:
+            - containerPort: 8080
+              name: hello-web

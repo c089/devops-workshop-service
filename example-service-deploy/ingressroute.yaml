@@ -12,3 +12,8 @@ spec:
       services:
         - name: hello
           port: 80
+    - kind: Rule
+      match: Host(`hello-canary.k3d.localhost`)
+      services:
+        - name: hello-canary
+          port: 80
