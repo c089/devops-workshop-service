@@ -7,8 +7,10 @@ on:
       - 'example-service/**'
 
 jobs:
-  update-example-service-docker-image:
+  build-docker-image:
     runs-on: ubuntu-latest
+    outputs:
+      image_id: ${{ steps.build-push.outputs.digest }}
     permissions:
       contents: read
       packages: write
@@ -30,9 +32,33 @@ jobs:
           images: ghcr.io/c089/argocd-playground-example-service
 
       - name: Build and push Docker image
+        id: build-push
         uses: docker/build-push-action@v3.2.0
         with:
           context: example-service
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-new-image:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Update deployment to point to new image
+        working-directory: example-service-deploy
+        env:
+          IMAGE_ID: ${{ needs.build-docker-image.outputs.image_id }}
+        run: |
+          set -e
+          image="ghcr.io/c089/argocd-playground-example-service@${IMAGE_ID}"
+          yq -i \
+            --output-format yaml \
+            "(.spec.template.spec.containers[]|select(.name==\"hello\")).image |= \"$image\"" \
+             deployment.yaml
+          git add deployment.yaml
+          git config user.name "Github Actions"
+          git config user.email "noreply@github.com"
+          git commit -m "Update example service image to $IMAGE_ID"
+          git push
