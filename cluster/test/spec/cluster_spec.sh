@@ -4,14 +4,12 @@ Describe 'k3d development cluster'
 
   Describe "Traefik"
     It "redirects http to https"
-      Pending "configure traefik entryPoint"
       When call curl $CURL_ARGS -I "http://any-service.k3d.localhost/"
       The status should be success
       The result of "redirect_url()" should equal "https://any-service.k3d.localhost/"
     End
 
     It "uses a valid certificate"
-      Pending "create and configure a default certificate for *.k3d.localhost"
       When call curl ${CURL_ARGS} --no-fail --no-insecure https://any-service.k3d.localhost/
       The status should be success
       The result of "ssl_verify_result()" should equal ${CURL_SSL_VERIFY_SUCCESS}
