@@ -6,12 +6,15 @@ spec:
   replicas: 5
   strategy:
     canary:
-      stableService: hello
+      stableService: hello-stable
       canaryService: hello-canary
       steps:
+        - setWeight: 0
+        - setCanaryScale:
+            replicas: 1
+        - pause: {}
         - setWeight: 20
         - pause: {}
-        - setWeight: 40
         - pause:
             duration: 10
         - setWeight: 60
@@ -20,6 +23,9 @@ spec:
         - setWeight: 80
         - pause:
             duration: 10
+      trafficRouting:
+        traefik:
+          weightedTraefikServiceName: hello
   selector:
     matchLabels:
       app: hello

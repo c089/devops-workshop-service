@@ -11,6 +11,12 @@ spec:
       match: Host(`hello.k3d.localhost`)
       services:
         - name: hello
+          kind: TraefikService
+          port: 80
+    - kind: Rule
+      match: Host(`hello-stable.k3d.localhost`)
+      services:
+        - name: hello-stable
           port: 80
     - kind: Rule
       match: Host(`hello-canary.k3d.localhost`)
