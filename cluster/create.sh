@@ -46,10 +46,6 @@ mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.localhost 
 # save it as secret for traefik to find
 kubectl create secret -n kube-system tls tls-default-certificate --cert $certfile --key $keyfile
 
-# cleanup
-rm $keyfile
-rm $certfile
-
 # install prometheus, alertmanager, grafana
 helm upgrade --install --atomic --create-namespace \
 	--namespace observability \
@@ -63,8 +59,25 @@ helm upgrade --install --atomic --create-namespace \
 	--namespace observability \
   loki-stack grafana/loki-stack
 
+# install blackbox-exporter
+kubectl create configmap \
+  -n observability \
+  certificate-host.k3d.internal \
+  --from-file "host.k3d.internal.crt=$certfile"
+
+helm upgrade --install --atomic \
+  --namespace observability \
+  --values "${CLUSTER_DIR}/prometheus-blackbox-exporter-values.yaml" \
+  prometheus-blackbox-exporter \
+  prometheus-community/prometheus-blackbox-exporter
+
+kubectl apply -f "${CLUSTER_DIR}/prometheus-blackbox-exporter-ingressroute.yaml"
+
+# cleanup
+rm $keyfile
+rm $certfile
+
 until ${CLUSTER_DIR}/test.sh; do
-do
 	(${CLUSTER_DIR}/test.sh) && break
 	sleep 5
 done

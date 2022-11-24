@@ -29,3 +29,19 @@ spec:
       services:
         - name: kube-prometheus-stack-prometheus
           port: 9090
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prometheus-blackbox
+  namespace: observability
+spec:
+  entryPoints:
+    - websecure
+  tls: {}
+  routes:
+    - kind: Rule
+      match: Host(`prometheus-blackbox.k3d.localhost`)
+      services:
+        - name: prometheus-blackbox-exporter
+          port: 9115

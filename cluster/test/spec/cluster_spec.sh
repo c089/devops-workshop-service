@@ -46,6 +46,27 @@ Describe 'k3d development cluster'
       The status should be success
       The result of "firing_alerts()" should equal "Watchdog"
     End
+
+    It "exposes the blackbox interface"
+      When call curl $CURL_ARGS https://prometheus-blackbox.k3d.localhost/
+      The status should be success
+      The result of "http_code()" should equal "200"
+    End
+
+    prometheus_blackbox_exporter_scrape_pools() {
+      curl $CURL_ARGS_API https://prometheus.k3d.localhost/api/v1/targets | jq -r \
+        '.data.activeTargets[] | select (.labels.service == "prometheus-blackbox-exporter") | .scrapePool'
+    }
+
+    It "scrapes the blackbox-exporter metrics"
+      When call prometheus_blackbox_exporter_scrape_pools
+      The output should include "serviceMonitor/observability/prometheus-blackbox-exporter/0"
+    End
+
+    It "scrapes the hello service"
+      When call prometheus_blackbox_exporter_scrape_pools
+      The output should include "serviceMonitor/observability/prometheus-blackbox-exporter-hello/0"
+    End
   End
 
   Describe "Grafana"
