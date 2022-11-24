@@ -99,3 +99,6 @@ until ${CLUSTER_DIR}/test.sh; do
 	(${CLUSTER_DIR}/test.sh) && break
 	sleep 5
 done
+
+echo "🥳 All done. Admin credentials and services:"
+./cluster/show-credentials.sh

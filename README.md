@@ -1,27 +1,18 @@
 ## Setup Infrastructure
 
-Create cluster:
 ```sh
+# Create cluster
 cluster/create.sh
-```
 
-Verify installation:
-```sh
-cluster/test.sh
-```
+# After cluster creation, a verification script will run repeatedly and fail some
+# tests for a while, but should eventually succeed if everything worked.
 
-Login to Argo-CD:
-```sh
-argocd login argocd.k3d.localhost --username admin --password $(kubectl get secret -n argocd argocd-initial-admin-secret -o json|jq .data.password -j | base64 -d)
-```
+# Login
+./cluster/argocd-login.sh
 
-Create the example app:
-
-```sh
+# Deploy the example service
 argocd app create -f example-service-deploy/argocd-application.yaml
+
+# Show credentials
+./cluster/show-credentials.sh
 ```
-
-## Credentials
-
-Grafana: admin / prom-operator
-Argocd: `kubectl get secret -n argocd argocd-initial-admin-secret -o json|jq .data.password -j | base64 -d`
