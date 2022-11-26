@@ -8,7 +8,7 @@ spec:
     automated: {}
   source:
     path: example-service-deploy
-    repoURL: https://github.com/c089/playground-argocd
+    repoURL: http://developer:developer@gitea-http.gitea.svc.cluster.local:3000/developer/hello-service
     targetRevision: HEAD
   destination:
     namespace: default
