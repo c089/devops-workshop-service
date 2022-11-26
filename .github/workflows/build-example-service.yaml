@@ -51,14 +51,4 @@ jobs:
         env:
           IMAGE_ID: ${{ needs.build-docker-image.outputs.image_id }}
         run: |
-          set -e
-          image="ghcr.io/c089/argocd-playground-example-service@${IMAGE_ID}"
-          yq -i \
-            --output-format yaml \
-            "(.spec.template.spec.containers[]|select(.name==\"hello\")).image |= \"$image\"" \
-             rollout.yaml
-          git add rollout.yaml
-          git config user.name "Github Actions"
-          git config user.email "noreply@github.com"
-          git commit -m "Update example service image to $IMAGE_ID"
-          git push
+          ./deploy.sh "ghcr.io/c089/argocd-playground-example-service@${IMAGE_ID}"
