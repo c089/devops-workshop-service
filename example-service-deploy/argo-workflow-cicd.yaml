@@ -1,0 +1,74 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: hello-cd-
+spec:
+  entrypoint: build-and-deploy
+  templates:
+    - name: build-and-deploy
+      steps:
+        - - name: build
+            template: build
+        - - name: update-image-to-deploy
+            template: update-image-to-deploy
+            arguments:
+              parameters:
+                - name: image
+                  value: "{{steps.build.outputs.parameters.image}}"
+    - name: build
+      inputs:
+        artifacts:
+          - name: sourcecode
+            path: /src
+            git:
+              repo: http://developer:developer@gitea-http.gitea.svc.cluster.local:3000/developer/hello-service
+              revision: main
+      outputs:
+        parameters:
+        - name: image
+          valueFrom:
+            path: /tmp/image
+      script:
+        image: docker:20.10.21
+        command: [ "sh" ]
+        source: |
+          until docker ps; do sleep 1; done;
+          image="registry:5000/hello-service:argo-{{workflow.uid}}"
+           cd /src/example-service
+           docker build -t ${image} .
+           docker push ${image}
+           echo $image >> /tmp/image
+        env:
+        - name: DOCKER_HOST
+          value: 127.0.0.1
+      sidecars:
+        - name: dind
+          image: docker:20.10.21-dind
+          command: [dockerd-entrypoint.sh]
+          args: ["--insecure-registry", "registry:5000"]
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: ""
+          securityContext:
+            privileged: true
+          mirrorVolumeMounts: true
+    - name: update-image-to-deploy
+      inputs:
+        parameters:
+        - name: image
+        artifacts:
+        - name: sourcecode
+          path: /src
+          git:
+            repo: http://developer:developer@gitea-http.gitea.svc.cluster.local:3000/developer/hello-service
+            singleBranch: true
+            branch: main
+      script:
+        image: alpine:3.17.0
+        command: [ "sh" ]
+        source: |
+            set -eux
+            apk add yq
+            apk add git
+            cd /src
+            ./example-service-deploy/deploy.sh {{inputs.parameters.image}}
