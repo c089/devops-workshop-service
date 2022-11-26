@@ -73,6 +73,17 @@ helm upgrade --install --atomic \
 
 kubectl apply -f "${CLUSTER_DIR}/prometheus-blackbox-exporter-ingressroute.yaml"
 
+
+kubectl create namespace argo
+
+# install argo-workflows
+helm upgrade --install \
+  -n argo \
+  argo-workflows \
+  argo/argo-workflows \
+  --values "${CLUSTER_DIR}/argo-workflows-values.yaml"
+kubectl apply -f "${CLUSTER_DIR}/argo-workflows-ingressroute.yaml"
+
 # install argocd
 helm install \
   -n argocd \

@@ -28,6 +28,7 @@ command_exists "jq"
 command_exists "k3d"
 command_exists "helm"
 command_exists "mkcert"
+command_exists "argo"
 command_exists "argocd"
 
 has_helm_repo "traefik" "https://traefik.github.io/charts"
