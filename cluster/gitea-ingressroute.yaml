@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: gitea
+spec:
+  entryPoints:
+    - websecure
+  tls: {}
+  routes:
+    - kind: Rule
+      match: Host(`gitea.k3d.localhost`)
+      services:
+        - name: gitea-http
+          port: 3000

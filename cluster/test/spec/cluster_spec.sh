@@ -50,6 +50,20 @@ Describe 'k3d development cluster'
     End
   End
 
+  Describe "Gitea"
+    It "exposes gitea web interface"
+      When call curl $CURL_ARGS https://gitea.k3d.localhost/
+      The status should be success
+      The result of "http_code()" should equal "200"
+    End
+
+    It "created the example repository"
+      When call curl $CURL_ARGS https://gitea.k3d.localhost/developer/hello-service
+      The status should be success
+      The result of "http_code()" should equal "200"
+    End
+  End
+
   Describe "Argo"
     It "exposes the argo-cd interface"
       When call curl $CURL_ARGS https://argocd.k3d.localhost/

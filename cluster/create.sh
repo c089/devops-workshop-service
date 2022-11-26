@@ -77,6 +77,15 @@ kubectl apply -f "${CLUSTER_DIR}/prometheus-blackbox-exporter-ingressroute.yaml"
 
 kubectl create namespace argo
 
+# install gitea
+helm upgrade --install --atomic --create-namespace \
+  --namespace gitea \
+  gitea \
+  gitea-charts/gitea \
+  --values "${CLUSTER_DIR}/gitea-values.yaml"
+kubectl apply -n gitea -f "${CLUSTER_DIR}/gitea-ingressroute.yaml"
+${CLUSTER_DIR}/gitea.sh
+
 # install argo-workflows
 helm upgrade --install \
   -n argo \
