@@ -22,6 +22,34 @@ Describe 'k3d development cluster'
     End
   End
 
+  Describe "Private Docker Registry"
+    It "is accessible to workloads in the cluster"
+      run_in_cluster() {
+        image="$1"; shift;
+        kubectl run \
+          --rm \
+          --wait \
+          --attach \
+          --restart=Never \
+          --image "${image}" \
+          registry-smoke-test \
+          --command $@
+      }
+
+      registry_name="registry"
+      local_tag="localhost:5000/busybox:latest"
+      cluster_tag="${registry_name}:5000/busybox:latest"
+
+      docker pull busybox:latest
+      docker tag busybox:latest ${local_tag}
+      docker push ${local_tag}
+
+      When call run_in_cluster ${cluster_tag} /bin/echo woop!
+      The status should be success
+      The output should include "woop!"
+    End
+  End
+
   Describe "Argo"
     It "exposes the argo-cd interface"
       When call curl $CURL_ARGS https://argocd.k3d.localhost/

@@ -13,7 +13,8 @@ mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.localhost 
 k3d cluster create \
   --agents 2 \
   -p "80:80@loadbalancer" \
-  -p "443:443@loadbalancer"
+  -p "443:443@loadbalancer" \
+  --registry-create registry:0.0.0.0:5000
 
 # configure traefik
 helm_deploy_status() {
