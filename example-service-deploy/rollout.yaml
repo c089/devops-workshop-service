@@ -8,6 +8,7 @@ spec:
     canary:
       stableService: hello-stable
       canaryService: hello-canary
+      dynamicStableScale: true
       steps:
         - setWeight: 0
         - setCanaryScale:
