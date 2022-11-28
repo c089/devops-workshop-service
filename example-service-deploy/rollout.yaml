@@ -12,9 +12,11 @@ spec:
         - setWeight: 0
         - setCanaryScale:
             replicas: 1
-        - pause: {}
+        - pause:
+            duration: 10
+        - setCanaryScale:
+            matchTrafficWeight: true
         - setWeight: 20
-        - pause: {}
         - pause:
             duration: 10
         - setWeight: 60
