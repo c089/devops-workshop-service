@@ -121,5 +121,7 @@ until ${CLUSTER_DIR}/test.sh; do
 	sleep 5
 done
 
+./cluster/argocd-create-workflow-user.sh
+
 echo "🥳 All done. Admin credentials and services:"
 ./cluster/show-credentials.sh

@@ -78,11 +78,14 @@ spec:
       script:
         image: alpine/k8s:1.25.4
         command: [ "sh" ]
+        env:
+         - name: ARGOCD_TOKEN
+           valueFrom:
+             secretKeyRef:
+               name: argocd-argo-workflows-token
+               key: auth-token
         source: |
-          set -xue
-
-          # TODO use secret
-          argoPassword="AH1jbJMvrPhpWTXa"
+          set -xueo pipefail
 
           # TODO: use builder image or put binaries in repo
           mkdir /tmp/bin
@@ -92,13 +95,8 @@ spec:
           ls /tmp/bin
           chmod u+x /tmp/bin/*
 
-          # TODO: user service account
-          argocd --plaintext login argo-cd-argocd-server.argocd.svc.cluster.local \
-            --username argo-workflows \
-            --password $argoPassword 
-
           # sync to initiate rollout
-          argocd app sync hello
+          argocd --server argo-cd-argocd-server.argocd.svc.cluster.local --plaintext --auth-token="$ARGOCD_TOKEN" app sync hello
           # wait for rollout to start
           kubectl wait --for=condition=Paused rollout hello
           # wait for rollout to finish
