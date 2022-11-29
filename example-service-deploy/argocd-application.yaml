@@ -4,8 +4,6 @@ metadata:
   name: hello
 spec:
   project: default
-  syncPolicy:
-    automated: {}
   source:
     path: example-service-deploy
     repoURL: http://developer:developer@gitea-http.gitea.svc.cluster.local:3000/developer/hello-service
