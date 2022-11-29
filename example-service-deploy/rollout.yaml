@@ -38,7 +38,7 @@ spec:
         app: hello
     spec:
       containers:
-        - image: ghcr.io/c089/argocd-playground-example-service:main
+        - image: registry:5000/hello-service:argo-b2313a2d-4f01-486f-bcfc-4fbbde255f74
           name: hello
           ports:
             - containerPort: 8080
