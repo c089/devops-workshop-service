@@ -91,6 +91,12 @@ Describe 'k3d development cluster'
       The status should be success
       The output should equal "yes"
     End
+
+   It "allows argo-workflows to sync apps in argocd"
+     When run argocd admin settings rbac can argo-workflows sync applications --namespace argocd
+     The status should be success
+     The output should equal "yes"
+    End
   End
 
   Describe "Prometheus"

@@ -102,6 +102,8 @@ helm install \
   argo/argo-cd \
   --values "${CLUSTER_DIR}/argocd-values.yaml"
 kubectl apply -f "${CLUSTER_DIR}/argocd-ingressroute.yaml"
+kubectl patch configmap -n argocd \
+  argocd-rbac-cm --patch-file cluster/argocd-configmap-rbac.yaml
 
 # install argo-rollouts
 helm install \
