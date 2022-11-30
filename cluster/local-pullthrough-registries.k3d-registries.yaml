@@ -1,0 +1,9 @@
+mirrors:
+  docker.io:
+    endpoint:
+      - "http://host.k3d.internal:5001"
+      - "https://docker.io"
+  quay.io:
+    endpoint:
+      - "http://host.k3d.internal:5002"
+      - "https://quay.io"

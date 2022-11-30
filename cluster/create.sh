@@ -9,11 +9,15 @@ keyfile=$(mktemp)
 certfile=$(mktemp)
 mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.localhost \*.k3d.localhost host.k3d.internal
 
+# make sure registries are up
+docker-compose -f "${CLUSTER_DIR}/local-pullthrough-registries.docker-compose.yaml" up -d
+
 # create cluster
 k3d cluster create \
   --agents 2 \
   -p "80:80@loadbalancer" \
   -p "443:443@loadbalancer" \
+  --registry-config "$CLUSTER_DIR/local-pullthrough-registries.k3d-registries.yaml" \
   --registry-create registry:0.0.0.0:5000
 
 # configure traefik
