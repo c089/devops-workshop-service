@@ -137,6 +137,14 @@ Describe 'k3d development cluster'
     End
   End
 
+  Describe "Loki"
+    It "can be queried using logcli"
+      When call query_loki '{app="loki"}'
+      The status should be success
+      The lines of stdout should not equal "0"
+    End
+  End
+
   Describe "Grafana"
     grafana_datasources() { env echo "$1" | jq -r '.[].uid' ; }
 

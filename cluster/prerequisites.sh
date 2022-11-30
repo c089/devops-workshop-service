@@ -34,6 +34,7 @@ command_exists "helm" "https://helm.sh/docs/intro/install/"
 command_exists "mkcert" "https://github.com/FiloSottile/mkcert"
 command_exists "argo" "https://argoproj.github.io/argo-workflows/quick-start/#install-the-argo-workflows-cli"
 command_exists "argocd" "https://argo-cd.readthedocs.io/en/stable/getting_started/#2-download-argo-cd-cli"
+command_exists "logcli" "https://grafana.com/docs/loki/latest/tools/logcli/"
 
 has_helm_repo "traefik" "https://traefik.github.io/charts"
 has_helm_repo "prometheus-community" "https://prometheus-community.github.io/helm-charts"

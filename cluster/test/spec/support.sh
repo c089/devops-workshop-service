@@ -61,4 +61,7 @@ grafana_api_call() {
     -H 'origin: https://grafana.k3d.localhost'
 }
 
+query_loki() {
+  LOKI_ADDR=https://loki.k3d.localhost/ logcli query --quiet "$1"
+}
 

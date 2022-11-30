@@ -64,6 +64,7 @@ helm upgrade --install --atomic --create-namespace \
   --values "${CLUSTER_DIR}/loki-stack-values.yaml" \
 	--namespace observability \
   loki-stack grafana/loki-stack
+kubectl apply -f "${CLUSTER_DIR}/loki-ingressroute.yaml"
 
 # install blackbox-exporter
 kubectl create configmap \
