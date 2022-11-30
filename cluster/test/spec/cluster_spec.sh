@@ -138,7 +138,7 @@ Describe 'k3d development cluster'
   End
 
   Describe "Grafana"
-    grafana_datasources() { env echo "$1" | jq -r '.data.result[].metric.plugin_id' ; }
+    grafana_datasources() { env echo "$1" | jq -r '.[].uid' ; }
 
     It "exposes the web interface"
       When call curl $CURL_ARGS https://grafana.k3d.localhost/
@@ -148,7 +148,7 @@ Describe 'k3d development cluster'
     End
 
     It "has Loki configured as datasource"
-      When call curl $CURL_ARGS_API https://prometheus.k3d.localhost/api/v1/query\?query='grafana_stat_totals_datasource'
+      When call grafana_api_call '/api/datasources'
       The status should be success
       The result of "grafana_datasources()" should include "loki"
     End
@@ -159,7 +159,7 @@ Describe 'k3d development cluster'
     End
 
     It "has Prometheus configured datasource"
-      When call curl $CURL_ARGS_API https://prometheus.k3d.localhost/api/v1/query\?query='grafana_stat_totals_datasource'
+      When call grafana_api_call '/api/datasources'
       The status should be success
       The result of "grafana_datasources()" should include "prometheus"
     End

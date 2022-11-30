@@ -54,3 +54,11 @@ grafana_prometheus_query_instant() {
                 }'
 }
 
+grafana_api_call() {
+  curl $CURL_ARGS_API "https://grafana.k3d.localhost$1" \
+    -H 'content-type: application/json' \
+    -u admin:prom-operator \
+    -H 'origin: https://grafana.k3d.localhost'
+}
+
+
