@@ -95,7 +95,7 @@ Describe 'k3d development cluster'
    It "allows argo-workflows to sync apps in argocd"
      When run argocd admin settings rbac can argo-workflows sync applications --namespace argocd
      The status should be success
-     The output should equal "yes"
+     The output should equal "Yes"
     End
   End
 
