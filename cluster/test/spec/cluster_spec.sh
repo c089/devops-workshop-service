@@ -180,6 +180,18 @@ Describe 'k3d development cluster'
       When call grafana_prometheus_query_instant 'grafana_build_info'
       The result of "extract_version_label()" should equal "9.2.4"
     End
+
+    It "has its log files aggregated"
+      When call query_loki '{app="grafana", namespace="observability", container="grafana"} | logfmt | level = `info`'
+      The status should be success
+      The lines of stdout should not equal 0
+    End
+
+    It "does not log any errors"
+      When call query_loki '{app="grafana", namespace="observability", container="grafana"} | logfmt | level = `error`'
+      The status should be success
+      The lines of stdout should equal 0
+    End
   End
 
 End
