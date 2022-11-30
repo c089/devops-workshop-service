@@ -118,12 +118,18 @@ kubectl apply -f "${CLUSTER_DIR}/argo-rollouts-rbac.yaml"
 rm $keyfile
 rm $certfile
 
+# Wait for login to succeed, then create workflow user in argocd
+until $(dirname "$0")/argocd-login.sh; do
+  sleep 1
+done
+./cluster/argocd-create-workflow-user.sh
+
+
 until ${CLUSTER_DIR}/test.sh; do
 	(${CLUSTER_DIR}/test.sh) && break
 	sleep 5
 done
 
-./cluster/argocd-create-workflow-user.sh
 
 echo "🥳 All done. Admin credentials and services:"
 ./cluster/show-credentials.sh
