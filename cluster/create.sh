@@ -61,6 +61,7 @@ kubectl apply -f "${CLUSTER_DIR}/kube-prometheus-stack-ingressroutes.yaml"
 
 # install loki and prommtail
 helm upgrade --install --atomic --create-namespace \
+  --values "${CLUSTER_DIR}/loki-stack-values.yaml" \
 	--namespace observability \
   loki-stack grafana/loki-stack
 

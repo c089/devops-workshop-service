@@ -1,13 +1,3 @@
-grafana:
-  additionalDataSources:
-    - name: Loki
-      uid: loki
-      type: loki
-      isDefault: false
-      access: proxy
-      url: http://loki-stack:3100/
-      jsonData:
-        maxLines: 1000
 prometheus:
   prometheusSpec:
     # when these are true, limits monitor discovery to "kube-prometheus-stack" own monitors.
