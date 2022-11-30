@@ -129,10 +129,12 @@ done
 ./cluster/argocd-create-workflow-user.sh
 
 
-until ${CLUSTER_DIR}/test.sh; do
-	(${CLUSTER_DIR}/test.sh) && break
+rm ${CLUSTER_DIR}/test/.shellspec-quick.log || true
+${CLUSTER_DIR}/test.sh -q || true
+until ${CLUSTER_DIR}/test.sh -q -r; do
 	sleep 5
 done
+${CLUSTER_DIR}/test.sh
 
 
 echo "🥳 All done. Admin credentials and services:"
