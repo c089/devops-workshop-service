@@ -1,4 +1,0 @@
-loki:
-  isDefault: false
-  datasource:
-    uid: "loki"

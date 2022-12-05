@@ -1,6 +1,0 @@
-gitea:
-  config:
-    server:
-      ROOT_URL: https://gitea.k3d.localhost/
-    webhook:
-      ALLOWED_HOST_LIST: "*.cluster.local"
