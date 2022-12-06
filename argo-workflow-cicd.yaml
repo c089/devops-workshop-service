@@ -23,7 +23,7 @@ spec:
           - name: sourcecode
             path: /src
             git:
-              repo: http://developer:developer@gitea-http.gitea.svc.cluster.local:3000/developer/hello-service
+              repo: http://developer:password@gitea-http.gitea.svc.cluster.local:3000/developer/service
               revision: main
       outputs:
         parameters:
@@ -36,7 +36,7 @@ spec:
         source: |
           until docker ps; do sleep 1; done;
           image="registry:5000/hello-service:argo-{{workflow.uid}}"
-           cd /src/example-service
+           cd /src/
            docker build -t ${image} .
            docker push ${image}
            echo $image >> /tmp/image
@@ -62,7 +62,7 @@ spec:
         - name: sourcecode
           path: /src
           git:
-            repo: http://developer:developer@gitea-http.gitea.svc.cluster.local:3000/developer/hello-service
+            repo: http://developer:password@gitea-http.gitea.svc.cluster.local:3000/developer/deployment
             singleBranch: true
             branch: main
       script:
@@ -73,7 +73,7 @@ spec:
             apk add yq
             apk add git
             cd /src
-            ./example-service-deploy/deploy.sh {{inputs.parameters.image}}
+            ./deploy.sh {{inputs.parameters.image}}
     - name: deploy
       script:
         image: alpine/k8s:1.25.4
