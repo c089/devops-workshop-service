@@ -16,7 +16,11 @@ if (import.meta.main) {
     console.log("Received SIGINT, finishing up requests");
     shutdown = true;
   });
-  
+  Deno.addSignalListener("SIGTERM", () => {
+    console.log("Received SIGTERM, finishing up requests");
+    shutdown = true;
+  });
+
   const server = Deno.listen({ port: 8080 });
   console.log(`Hello service waiting for friendly greeting requests. ${Deno.env.get("HOSTNAME")}`);
 
