@@ -5,7 +5,7 @@ async function serveHttp(conn: Deno.Conn) {
   for await (const requestEvent of httpConn) {
     console.log(`Received a friendly request, responding with a greeting.`);
     requestEvent.respondWith(
-      new Response("Hello lovelies! " + Deno.env.get("HOSTNAME") + " : " + Deno.inspect(requestEvent.request), { status: 200 }),
+      new Response("Hello lovelies! " + Deno.env.get("HOSTNAME"), { status: 200 }),
     );
     if (shutdown) break;
   }
