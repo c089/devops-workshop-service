@@ -9,51 +9,47 @@ spec:
       steps:
         - - name: build
             template: build
+            arguments:
+              parameters:
+                - name: image
+                  value: "registry:5000/hello-service:argo-{{workflow.uid}}"
         - - name: update-image-to-deploy
             template: update-image-to-deploy
             arguments:
               parameters:
                 - name: image
-                  value: "{{steps.build.outputs.parameters.image}}"
+                  value: "registry:5000/hello-service:argo-{{workflow.uid}}"
         - - name: deploy
             template: deploy
     - name: build
       inputs:
-        artifacts:
-          - name: sourcecode
-            path: /src
-            git:
-              repo: http://developer:password@gitea-http.gitea.svc.cluster.local:3000/developer/service
-              revision: main
-      outputs:
         parameters:
-        - name: image
-          valueFrom:
-            path: /tmp/image
-      script:
-        image: docker:20.10.21
-        command: [ "sh" ]
-        source: |
-          until docker ps; do sleep 1; done;
-          image="registry:5000/hello-service:argo-{{workflow.uid}}"
-           cd /src/
-           docker build -t ${image} .
-           docker push ${image}
-           echo $image >> /tmp/image
+          - name: image
+        artifacts:
+        - name: sourcecode
+          path: /src
+          git:
+            repo: http://developer:password@gitea-http.gitea.svc.cluster.local:3000/developer/service
+            singleBranch: true
+            branch: main
+      container:
+        image: moby/buildkit:v0.10.6-rootless
+        workingDir: /src
         env:
-        - name: DOCKER_HOST
-          value: 127.0.0.1
-      sidecars:
-        - name: dind
-          image: docker:20.10.21-dind
-          command: [dockerd-entrypoint.sh]
-          args: ["--insecure-registry", "registry:5000"]
-          env:
-            - name: DOCKER_TLS_CERTDIR
-              value: ""
-          securityContext:
-            privileged: true
-          mirrorVolumeMounts: true
+          - name: BUILDKITD_FLAGS
+            value: --oci-worker-no-process-sandbox
+        command:
+          - buildctl-daemonless.sh
+        args:
+          - build
+          - --frontend
+          - dockerfile.v0
+          - --local
+          - context=.
+          - --local
+          - dockerfile=.
+          - --output
+          - type=image,name={{inputs.parameters.image}},push=true,registry.insecure=true
     - name: update-image-to-deploy
       inputs:
         parameters:
