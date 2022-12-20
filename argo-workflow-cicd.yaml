@@ -94,8 +94,8 @@ spec:
           # sync to initiate rollout
           argocd --server argo-cd-argocd-server.argocd.svc.cluster.local --plaintext --auth-token="$ARGOCD_TOKEN" app sync hello
           # wait for rollout to start
-          kubectl wait --for=condition=Paused rollout hello
+          kubectl wait -n default --for=condition=Paused rollout hello
           # wait for rollout to finish
-          kubectl argo rollouts status hello
+          kubectl argo rollouts -n default status hello
           # print rollout details to log
-          kubectl argo rollouts get rollout hello
+          kubectl argo rollouts -n default get rollout hello
