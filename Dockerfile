@@ -1,9 +1,4 @@
-FROM denoland/deno:1.28.0
-EXPOSE 8080
-WORKDIR /app
-USER deno
-#COPY deps.ts .
-#RUN deno cache deps.ts
-ADD . .
-RUN deno cache main.ts
-CMD ["run", "--allow-net", "--allow-env", "main.ts"]
+FROM openjdk:19-jdk-alpine
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
